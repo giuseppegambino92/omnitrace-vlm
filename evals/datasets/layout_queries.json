@@ -1,0 +1,422 @@
+[
+ {
+  "qid": "table-0-q0",
+  "page_id": "table-0",
+  "text": "max current of T-273",
+  "answer_region": "table-0/spec-r7c2",
+  "family": "table"
+ },
+ {
+  "qid": "table-0-q1",
+  "page_id": "table-0",
+  "text": "rated power V-271 Control Valve",
+  "answer_region": "table-0/spec-r4c3",
+  "family": "table"
+ },
+ {
+  "qid": "table-0-q2",
+  "page_id": "table-0",
+  "text": "next service date for HX-254",
+  "answer_region": "table-0/maint-r0c3",
+  "family": "table"
+ },
+ {
+  "qid": "table-0-q3",
+  "page_id": "table-0",
+  "text": "operating temp range of HX-254 Heat Exchanger",
+  "answer_region": "table-0/spec-r0c4",
+  "family": "table"
+ },
+ {
+  "qid": "table-1-q0",
+  "page_id": "table-1",
+  "text": "max current of P-350",
+  "answer_region": "table-1/spec-r2c2",
+  "family": "table"
+ },
+ {
+  "qid": "table-1-q1",
+  "page_id": "table-1",
+  "text": "rated power S-345 Separator",
+  "answer_region": "table-1/spec-r4c3",
+  "family": "table"
+ },
+ {
+  "qid": "table-1-q2",
+  "page_id": "table-1",
+  "text": "next service date for S-345",
+  "answer_region": "table-1/maint-r4c3",
+  "family": "table"
+ },
+ {
+  "qid": "table-1-q3",
+  "page_id": "table-1",
+  "text": "operating temp range of V-346 Control Valve",
+  "answer_region": "table-1/spec-r7c4",
+  "family": "table"
+ },
+ {
+  "qid": "table-2-q0",
+  "page_id": "table-2",
+  "text": "max current of P-447",
+  "answer_region": "table-2/spec-r1c2",
+  "family": "table"
+ },
+ {
+  "qid": "table-2-q1",
+  "page_id": "table-2",
+  "text": "rated power T-460 Transformer",
+  "answer_region": "table-2/spec-r6c3",
+  "family": "table"
+ },
+ {
+  "qid": "table-2-q2",
+  "page_id": "table-2",
+  "text": "next service date for F-416",
+  "answer_region": "table-2/maint-r3c3",
+  "family": "table"
+ },
+ {
+  "qid": "table-2-q3",
+  "page_id": "table-2",
+  "text": "operating temp range of P-478 Feed Pump",
+  "answer_region": "table-2/spec-r0c4",
+  "family": "table"
+ },
+ {
+  "qid": "schematic-0-q0",
+  "page_id": "schematic-0",
+  "text": "red FAULT node on process line 1",
+  "answer_region": "schematic-0/n7",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-0-q1",
+  "page_id": "schematic-0",
+  "text": "FM-19 Flow Meter",
+  "answer_region": "schematic-0/n9",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-0-q2",
+  "page_id": "schematic-0",
+  "text": "status of the storage tank TK-16",
+  "answer_region": "schematic-0/n2",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-0-q3",
+  "page_id": "schematic-0",
+  "text": "drawing PID-001 sheet approval",
+  "answer_region": "schematic-0/rev",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-1-q0",
+  "page_id": "schematic-1",
+  "text": "red FAULT node on process line 2",
+  "answer_region": "schematic-1/n0",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-1-q1",
+  "page_id": "schematic-1",
+  "text": "FM-22 Flow Meter",
+  "answer_region": "schematic-1/n9",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-1-q2",
+  "page_id": "schematic-1",
+  "text": "status of the temperature sensor TS-23",
+  "answer_region": "schematic-1/n3",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-1-q3",
+  "page_id": "schematic-1",
+  "text": "drawing PID-002 sheet approval",
+  "answer_region": "schematic-1/rev",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-2-q0",
+  "page_id": "schematic-2",
+  "text": "red FAULT node on process line 3",
+  "answer_region": "schematic-2/n1",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-2-q1",
+  "page_id": "schematic-2",
+  "text": "S-37 Separator",
+  "answer_region": "schematic-2/n9",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-2-q2",
+  "page_id": "schematic-2",
+  "text": "status of the temperature sensor TS-37",
+  "answer_region": "schematic-2/n0",
+  "family": "schematic"
+ },
+ {
+  "qid": "schematic-2-q3",
+  "page_id": "schematic-2",
+  "text": "drawing PID-003 sheet approval",
+  "answer_region": "schematic-2/rev",
+  "family": "schematic"
+ },
+ {
+  "qid": "multicol-0-q0",
+  "page_id": "multicol-0",
+  "text": "RF-3 SPI bus clock limit",
+  "answer_region": "multicol-0/s2p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-0-q1",
+  "page_id": "multicol-0",
+  "text": "RF-3 calibration drift limit",
+  "answer_region": "multicol-0/s4p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-0-q2",
+  "page_id": "multicol-0",
+  "text": "TC-4 brownout trip level",
+  "answer_region": "multicol-0/s7p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-0-q3",
+  "page_id": "multicol-0",
+  "text": "RF-3 watchdog timeout",
+  "answer_region": "multicol-0/s3p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-1-q0",
+  "page_id": "multicol-1",
+  "text": "HB-1 watchdog timeout",
+  "answer_region": "multicol-1/s6p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-1-q1",
+  "page_id": "multicol-1",
+  "text": "LM-2 thermal shutdown threshold",
+  "answer_region": "multicol-1/s1p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-1-q2",
+  "page_id": "multicol-1",
+  "text": "XR-7 watchdog timeout",
+  "answer_region": "multicol-1/s12p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-1-q3",
+  "page_id": "multicol-1",
+  "text": "XR-7 brownout trip level",
+  "answer_region": "multicol-1/s9p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-2-q0",
+  "page_id": "multicol-2",
+  "text": "PW-6 thermal shutdown threshold",
+  "answer_region": "multicol-2/s5p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-2-q1",
+  "page_id": "multicol-2",
+  "text": "QS-5 brownout trip level",
+  "answer_region": "multicol-2/s4p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-2-q2",
+  "page_id": "multicol-2",
+  "text": "QS-5 firmware rollback version",
+  "answer_region": "multicol-2/s2p",
+  "family": "multicol"
+ },
+ {
+  "qid": "multicol-2-q3",
+  "page_id": "multicol-2",
+  "text": "PW-6 brownout trip level",
+  "answer_region": "multicol-2/s8p",
+  "family": "multicol"
+ },
+ {
+  "qid": "ui-0-q0",
+  "page_id": "ui-0",
+  "text": "red error message for billing zip",
+  "answer_region": "ui-0/err3",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-0-q1",
+  "page_id": "ui-0",
+  "text": "Place Order button",
+  "answer_region": "ui-0/submit",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-0-q2",
+  "page_id": "ui-0",
+  "text": "payment latency card",
+  "answer_region": "ui-0/card2",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-0-q3",
+  "page_id": "ui-0",
+  "text": "orange toast payment notification at bottom",
+  "answer_region": "ui-0/toast",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-1-q0",
+  "page_id": "ui-1",
+  "text": "red error message for display name",
+  "answer_region": "ui-1/err0",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-1-q1",
+  "page_id": "ui-1",
+  "text": "Save Changes button",
+  "answer_region": "ui-1/submit",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-1-q2",
+  "page_id": "ui-1",
+  "text": "storage used card",
+  "answer_region": "ui-1/card2",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-1-q3",
+  "page_id": "ui-1",
+  "text": "orange toast profile notification at bottom",
+  "answer_region": "ui-1/toast",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-2-q0",
+  "page_id": "ui-2",
+  "text": "red error message for container image",
+  "answer_region": "ui-2/err1",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-2-q1",
+  "page_id": "ui-2",
+  "text": "Deploy Now button",
+  "answer_region": "ui-2/submit",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-2-q2",
+  "page_id": "ui-2",
+  "text": "cpu utilization card",
+  "answer_region": "ui-2/card2",
+  "family": "ui"
+ },
+ {
+  "qid": "ui-2-q3",
+  "page_id": "ui-2",
+  "text": "orange toast registry notification at bottom",
+  "answer_region": "ui-2/toast",
+  "family": "ui"
+ },
+ {
+  "qid": "chart-0-q0",
+  "page_id": "chart-0",
+  "text": "Q3 API p99 latency bar",
+  "answer_region": "chart-0/bar-Q3-API",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-0-q1",
+  "page_id": "chart-0",
+  "text": "orange batch p99 latency bar Q1",
+  "answer_region": "chart-0/bar-Q1-Batch",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-0-q2",
+  "page_id": "chart-0",
+  "text": "Q4 observed p99 latency value",
+  "answer_region": "chart-0/sum-r3c2",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-0-q3",
+  "page_id": "chart-0",
+  "text": "Q2 SLO target for p99 latency",
+  "answer_region": "chart-0/sum-r1c1",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-1-q0",
+  "page_id": "chart-1",
+  "text": "Q3 API error rate bar",
+  "answer_region": "chart-1/bar-Q3-API",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-1-q1",
+  "page_id": "chart-1",
+  "text": "orange batch error rate bar Q1",
+  "answer_region": "chart-1/bar-Q1-Batch",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-1-q2",
+  "page_id": "chart-1",
+  "text": "Q4 observed error rate value",
+  "answer_region": "chart-1/sum-r3c2",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-1-q3",
+  "page_id": "chart-1",
+  "text": "Q2 SLO target for error rate",
+  "answer_region": "chart-1/sum-r1c1",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-2-q0",
+  "page_id": "chart-2",
+  "text": "Q3 API throughput bar",
+  "answer_region": "chart-2/bar-Q3-API",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-2-q1",
+  "page_id": "chart-2",
+  "text": "orange batch throughput bar Q1",
+  "answer_region": "chart-2/bar-Q1-Batch",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-2-q2",
+  "page_id": "chart-2",
+  "text": "Q4 observed throughput value",
+  "answer_region": "chart-2/sum-r3c2",
+  "family": "chart"
+ },
+ {
+  "qid": "chart-2-q3",
+  "page_id": "chart-2",
+  "text": "Q2 SLO target for throughput",
+  "answer_region": "chart-2/sum-r1c1",
+  "family": "chart"
+ }
+]
