@@ -4,8 +4,9 @@
     python -m evals.repeat_runs --runs 5 --max-load 0.25 --wait-timeout 1800
 
 * **Quiet-machine gate.** Before every run the script waits until the 1-minute load
-  average divided by the logical CPU count is at or below ``--max-load``, then lets the
-  machine settle for ``--settle`` seconds. If the gate never opens within
+  average divided by the logical CPU count is at or below ``--max-load``, lets the
+  machine settle for ``--settle`` seconds and re-checks; the run starts only if the
+  machine is still below the gate (the recorded start load is that re-checked value). If the gate never opens within
   ``--wait-timeout`` it aborts (exit 3); ``--force`` runs anyway and records the load.
 * **Isolation.** Each run is a fresh ``python -m evals.benchmark_suite`` subprocess (no
   shared caches, no warm imports).
@@ -75,7 +76,9 @@ def wait_until_quiet(max_load: float, timeout: float, settle: float, poll: float
         if lpc <= max_load:
             if settle > 0:
                 time.sleep(settle)
-            return True, load_per_core()
+            lpc = load_per_core()
+            if lpc <= max_load:          # still quiet after settling: start now
+                return True, lpc
         if time.monotonic() - t0 >= timeout:
             return False, lpc
         print(f"  waiting for a quiet machine: load/core {lpc:.2f} > {max_load:.2f}", flush=True)
@@ -173,7 +176,7 @@ def markdown(rep: dict, lang: str) -> str:
         tgt = f"{t['target'][0]} {_ms(t['target'][1], lang)}" if t["target"] else "-"
         vals = " | ".join(_ms(v, lang) for v in t["values"])
         lines.append(f"| {t['label_' + lang]} | {tgt} | {vals} | [{_ms(t['min'], lang)}, {_ms(t['max'], lang)}] | "
-                     f"{_pct(t['cv'], lang)} | {yes if t['target_met_every_run'] else no} |")
+                     f"{_pct(t['cv'], lang)} | {'-' if not t['target'] else yes if t['target_met_every_run'] else no} |")
     lines += ["", hh, "|---|" + "---|" * n]
     for h in a["headlines"]:
         lines.append(f"| {h['label_' + lang]} | " + " | ".join(_pct(v, lang) for v in h["values"]) + " |")
