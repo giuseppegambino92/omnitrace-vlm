@@ -1,0 +1,215 @@
+{
+ "finished": "2026-11-14 06:14",
+ "platform": "Darwin arm64",
+ "cpus": 14,
+ "max_load_per_core": 0.5,
+ "runs": [
+  {
+   "run": 1,
+   "load_per_core_at_start": 0.33070591517857145,
+   "quiet_gate_passed": true,
+   "wall_seconds": 14.12281758399331
+  },
+  {
+   "run": 2,
+   "load_per_core_at_start": 0.3037806919642857,
+   "quiet_gate_passed": true,
+   "wall_seconds": 14.154179750010371
+  },
+  {
+   "run": 3,
+   "load_per_core_at_start": 0.27675083705357145,
+   "quiet_gate_passed": true,
+   "wall_seconds": 14.198822916980134
+  }
+ ],
+ "analysis": {
+  "compared_exact_metrics": 270,
+  "nonrepeatable_metrics": {},
+  "timings": [
+   {
+    "metric": "dedup.omnitrace.ms_per_frame_median",
+    "label_en": "Frame dedup, ms/frame (median of 7)",
+    "label_it": "Deduplicazione frame, ms/frame (mediana di 7)",
+    "target": [
+     "<",
+     0.5
+    ],
+    "values": [
+     0.13320416503120214,
+     0.1335152100364212,
+     0.13333479000721127
+    ],
+    "min": 0.13320416503120214,
+    "max": 0.1335152100364212,
+    "cv": 0.0009563068144323015,
+    "target_met_every_run": true
+   },
+   {
+    "metric": "security.documents_dev.latency_ms_p95",
+    "label_en": "Shield latency p95, ms/doc",
+    "label_it": "Latenza shield p95, ms/doc",
+    "target": [
+     "<",
+     2.0
+    ],
+    "values": [
+     0.19470429979264733,
+     0.1960714143933728,
+     0.19632050534710288
+    ],
+    "min": 0.19470429979264733,
+    "max": 0.19632050534710288,
+    "cv": 0.0036305311193062894,
+    "target_met_every_run": true
+   },
+   {
+    "metric": "security.documents_dev.latency_ms_max",
+    "label_en": "Shield latency max, ms/doc",
+    "label_it": "Latenza shield max, ms/doc",
+    "target": [
+     "<",
+     2.0
+    ],
+    "values": [
+     0.4600420070346445,
+     0.47491598525084555,
+     0.4709589993581176
+    ],
+    "min": 0.4600420070346445,
+    "max": 0.47491598525084555,
+    "cv": 0.013421784479073382,
+    "target_met_every_run": true
+   },
+   {
+    "metric": "grounding.dev_seed_7.omnitrace_int8.query_latency_ms_p50",
+    "label_en": "Visual query p50 (int8), ms",
+    "label_it": "Query visuale p50 (int8), ms",
+    "target": null,
+    "values": [
+     5.349770493921824,
+     5.344437508028932,
+     5.375374981667846
+    ],
+    "min": 5.344437508028932,
+    "max": 5.375374981667846,
+    "cv": 0.0025209867597550764,
+    "target_met_every_run": true
+   },
+   {
+    "metric": "rca.dev_seed_11.latency_ms_mean",
+    "label_en": "RCA mean latency per trace, ms",
+    "label_it": "Latenza media RCA per traccia, ms",
+    "target": null,
+    "values": [
+     14.153891592286527,
+     14.403191799647175,
+     14.070549898315221
+    ],
+    "min": 14.070549898315221,
+    "max": 14.403191799647175,
+    "cv": 0.00994579913219631,
+    "target_met_every_run": true
+   },
+   {
+    "metric": "security.loop_breaker.ms_per_step_mean",
+    "label_en": "Loop breaker, ms/step",
+    "label_it": "Loop breaker, ms/passo",
+    "target": null,
+    "values": [
+     0.04613713353185178,
+     0.04602509273339935,
+     0.04624123759918121
+    ],
+    "min": 0.04602509273339935,
+    "max": 0.04624123759918121,
+    "cv": 0.0019131153963710791,
+    "target_met_every_run": true
+   }
+  ],
+  "headlines": [
+   {
+    "metric": "grounding.dev_seed_7.omnitrace_int8.region_recall@1",
+    "label_en": "Grounding Region R@1 (dev, int8)",
+    "label_it": "Grounding R@1 regione (dev, int8)",
+    "values": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   {
+    "metric": "grounding.heldout_mean_region_recall@1_int8",
+    "label_en": "Grounding Region R@1 (held-out)",
+    "label_it": "Grounding R@1 regione (held-out)",
+    "values": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   {
+    "metric": "dedup.omnitrace.redundant_frames_eliminated",
+    "label_en": "Frames eliminated",
+    "label_it": "Frame eliminati",
+    "values": [
+     0.92,
+     0.92,
+     0.92
+    ]
+   },
+   {
+    "metric": "dedup.omnitrace.transition_recall",
+    "label_en": "Transition recall",
+    "label_it": "Recall transizioni",
+    "values": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   {
+    "metric": "rca.dev_seed_11.top1_accuracy",
+    "label_en": "RCA Top-1 (dev)",
+    "label_it": "RCA Top-1 (dev)",
+    "values": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   {
+    "metric": "security.combined_dev.recall",
+    "label_en": "Injection + loop recall (dev)",
+    "label_it": "Recall iniezioni + loop (dev)",
+    "values": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   {
+    "metric": "security.combined_dev.false_positive_rate",
+    "label_en": "Injection + loop FPR (dev)",
+    "label_it": "FPR iniezioni + loop (dev)",
+    "values": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "metric": "security.documents_heldout.recall",
+    "label_en": "Injection recall (held-out)",
+    "label_it": "Recall iniezioni (held-out)",
+    "values": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  ],
+  "repeatable": true,
+  "all_targets_met": true
+ }
+}

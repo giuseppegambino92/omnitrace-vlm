@@ -1,0 +1,576 @@
+{
+ "grounding": {
+  "dataset": "15 synthetic technical pages x 4 queries (tables, schematics, multi-column specs, UI viewports, charts); hit = correct page and IoU >= 0.5 with the answer region",
+  "index": {
+   "pages": 15,
+   "patches_per_page": 1024,
+   "dim": 1024,
+   "encode_ms_per_page": 34.456744466054566,
+   "bytes_per_patch": {
+    "float32": 4096,
+    "int8": 1028,
+    "int2": 260,
+    "binary": 132
+   }
+  },
+  "dev_seed_7": {
+   "omnitrace_float32": {
+    "region_recall@1": 1.0,
+    "page_recall@1": 1.0,
+    "mean_iou": 1.0,
+    "n_queries": 60,
+    "per_family_region_recall@1": {
+     "table": 1.0,
+     "schematic": 1.0,
+     "multicol": 1.0,
+     "ui": 1.0,
+     "chart": 1.0
+    },
+    "query_latency_ms_p50": 5.495374993188307,
+    "query_latency_ms_p95": 6.739877100335434
+   },
+   "omnitrace_int8": {
+    "region_recall@1": 1.0,
+    "page_recall@1": 1.0,
+    "mean_iou": 1.0,
+    "n_queries": 60,
+    "per_family_region_recall@1": {
+     "table": 1.0,
+     "schematic": 1.0,
+     "multicol": 1.0,
+     "ui": 1.0,
+     "chart": 1.0
+    },
+    "query_latency_ms_p50": 5.375374981667846,
+    "query_latency_ms_p95": 6.54845449316781
+   },
+   "omnitrace_int2": {
+    "region_recall@1": 1.0,
+    "page_recall@1": 1.0,
+    "mean_iou": 1.0,
+    "n_queries": 60,
+    "per_family_region_recall@1": {
+     "table": 1.0,
+     "schematic": 1.0,
+     "multicol": 1.0,
+     "ui": 1.0,
+     "chart": 1.0
+    },
+    "query_latency_ms_p50": 5.380916511057876,
+    "query_latency_ms_p95": 6.487768405349925
+   },
+   "omnitrace_binary": {
+    "region_recall@1": 1.0,
+    "page_recall@1": 1.0,
+    "mean_iou": 1.0,
+    "n_queries": 60,
+    "per_family_region_recall@1": {
+     "table": 1.0,
+     "schematic": 1.0,
+     "multicol": 1.0,
+     "ui": 1.0,
+     "chart": 1.0
+    },
+    "query_latency_ms_p50": 5.83283300511539,
+    "query_latency_ms_p95": 7.071175341843627
+   },
+   "baseline_flat_text_chunk_bm25": {
+    "region_recall@1": 0.0,
+    "page_recall@1": 0.95,
+    "mean_iou": 0.050411268682542795,
+    "n_queries": 60,
+    "per_family_region_recall@1": {
+     "table": 0.0,
+     "schematic": 0.0,
+     "multicol": 0.0,
+     "ui": 0.0,
+     "chart": 0.0
+    }
+   },
+   "baseline_region_bm25_no_layout_context": {
+    "region_recall@1": 0.4666666666666667,
+    "page_recall@1": 0.8833333333333333,
+    "mean_iou": 0.4666666666666667,
+    "n_queries": 60,
+    "per_family_region_recall@1": {
+     "table": 0.0,
+     "schematic": 0.75,
+     "multicol": 0.25,
+     "ui": 0.8333333333333334,
+     "chart": 0.5
+    }
+   },
+   "ablation_raw_colbert_maxsim_page_ranking": {
+    "region_recall@1": 0.9666666666666667,
+    "page_recall@1": 0.9666666666666667,
+    "mean_iou": 0.9666666666666667,
+    "n_queries": 60,
+    "per_family_region_recall@1": {
+     "table": 1.0,
+     "schematic": 0.8333333333333334,
+     "multicol": 1.0,
+     "ui": 1.0,
+     "chart": 1.0
+    }
+   },
+   "ablation_heatmap_only_bbox_no_structure_layer": {
+    "region_recall@1": 0.6166666666666667,
+    "page_recall@1": 1.0,
+    "mean_iou": 0.6165878430249092,
+    "n_queries": 60,
+    "per_family_region_recall@1": {
+     "table": 0.5,
+     "schematic": 1.0,
+     "multicol": 0.0,
+     "ui": 1.0,
+     "chart": 0.5833333333333334
+    }
+   }
+  },
+  "heldout_seeds": {
+   "11": {
+    "omnitrace_int8": {
+     "region_recall@1": 1.0,
+     "page_recall@1": 1.0,
+     "mean_iou": 1.0,
+     "n_queries": 60,
+     "per_family_region_recall@1": {
+      "table": 1.0,
+      "schematic": 1.0,
+      "multicol": 1.0,
+      "ui": 1.0,
+      "chart": 1.0
+     }
+    },
+    "baseline_flat_text_chunk_bm25": {
+     "region_recall@1": 0.0,
+     "page_recall@1": 0.9,
+     "mean_iou": 0.056124985627771705,
+     "n_queries": 60,
+     "per_family_region_recall@1": {
+      "table": 0.0,
+      "schematic": 0.0,
+      "multicol": 0.0,
+      "ui": 0.0,
+      "chart": 0.0
+     }
+    }
+   },
+   "23": {
+    "omnitrace_int8": {
+     "region_recall@1": 1.0,
+     "page_recall@1": 1.0,
+     "mean_iou": 1.0,
+     "n_queries": 60,
+     "per_family_region_recall@1": {
+      "table": 1.0,
+      "schematic": 1.0,
+      "multicol": 1.0,
+      "ui": 1.0,
+      "chart": 1.0
+     }
+    },
+    "baseline_flat_text_chunk_bm25": {
+     "region_recall@1": 0.0,
+     "page_recall@1": 0.9,
+     "mean_iou": 0.0446761718840495,
+     "n_queries": 60,
+     "per_family_region_recall@1": {
+      "table": 0.0,
+      "schematic": 0.0,
+      "multicol": 0.0,
+      "ui": 0.0,
+      "chart": 0.0
+     }
+    }
+   },
+   "42": {
+    "omnitrace_int8": {
+     "region_recall@1": 1.0,
+     "page_recall@1": 1.0,
+     "mean_iou": 1.0,
+     "n_queries": 60,
+     "per_family_region_recall@1": {
+      "table": 1.0,
+      "schematic": 1.0,
+      "multicol": 1.0,
+      "ui": 1.0,
+      "chart": 1.0
+     }
+    },
+    "baseline_flat_text_chunk_bm25": {
+     "region_recall@1": 0.0,
+     "page_recall@1": 0.9,
+     "mean_iou": 0.04884767844487488,
+     "n_queries": 60,
+     "per_family_region_recall@1": {
+      "table": 0.0,
+      "schematic": 0.0,
+      "multicol": 0.0,
+      "ui": 0.0,
+      "chart": 0.0
+     }
+    }
+   }
+  },
+  "heldout_mean_region_recall@1_int8": 1.0
+ },
+ "dedup": {
+  "dataset": "200 frames (480x270 @10 fps, Gaussian sensor noise sigma=1.5) with 12 ground-truth transitions incl. a 1-digit badge change, a 25-frame spinner, modal open/close, toast in/out and a 4-frame fade",
+  "omnitrace": {
+   "frames": 200,
+   "keyframes": 16,
+   "redundant_frames_eliminated": 0.92,
+   "ms_per_frame_median": 0.13333479000721127,
+   "ms_per_frame_max": 0.13378562493016943,
+   "transition_recall": 1.0,
+   "missed_transitions": [],
+   "spurious_keyframes": [],
+   "animation_runs": [
+    [
+     46,
+     69
+    ]
+   ],
+   "noise_adaptive_threshold": 0.9488274734757228
+  },
+  "baseline_global_dhash_hamming_gt4": {
+   "keyframes": 9,
+   "redundant_frames_eliminated": 0.955,
+   "transition_recall": 0.4166666666666667
+  }
+ },
+ "rca": {
+  "dataset": "10 failing 12 s storefront sessions (60 frames @5 fps, DOM log, ~66 spans across ~14 services, logs) with injected root causes and distractors",
+  "dev_seed_11": {
+   "top1_accuracy": 1.0,
+   "mrr": 1.0,
+   "latency_ms_mean": 14.070549898315221,
+   "latency_ms_max": 16.82095800060779,
+   "mean_spans_per_trace": 66.6,
+   "baselines_top1": {
+    "first_error_span": 0.0,
+    "last_error_span_before_symptom": 0.1,
+    "longest_span": 0.0,
+    "most_error_logs_span": 0.0
+   },
+   "cases": [
+    {
+     "scenario": "payment_db_timeout",
+     "top1": true,
+     "rank_of_true_root": 1,
+     "spans": 69,
+     "frames": 60,
+     "keyframes": 3,
+     "anomalies": [
+      "dom_error",
+      "error_banner"
+     ],
+     "predicted": "postgres:INSERT payments",
+     "truth": "postgres INSERT payments statement timeout"
+    },
+    {
+     "scenario": "schema_drift_blank_grid",
+     "top1": true,
+     "rank_of_true_root": 1,
+     "spans": 66,
+     "frames": 60,
+     "keyframes": 4,
+     "anomalies": [
+      "dom_emptied",
+      "blank_region"
+     ],
+     "predicted": "catalog-service:ListProducts",
+     "truth": "catalog-service ListProducts response dropped 'items' (schema drift, HTTP 200)"
+    },
+    {
+     "scenario": "slow_search_frozen_spinner",
+     "top1": true,
+     "rank_of_true_root": 1,
+     "spans": 66,
+     "frames": 60,
+     "keyframes": 4,
+     "anomalies": [
+      "dom_stall",
+      "blank_region",
+      "stalled_spinner"
+     ],
+     "predicted": "elasticsearch:query products",
+     "truth": "elasticsearch query stalled for 30 s"
+    },
+    {
+     "scenario": "auth_expired_modal",
+     "top1": true,
+     "rank_of_true_root": 1,
+     "spans": 69,
+     "frames": 60,
+     "keyframes": 5,
+     "anomalies": [
+      "error_banner",
+      "modal_overlay"
+     ],
+     "predicted": "auth-service:ValidateToken",
+     "truth": "auth-service ValidateToken rejected an expired token (401)"
+    },
+    {
+     "scenario": "inventory_503_behind_502",
+     "top1": true,
+     "rank_of_true_root": 1,
+     "spans": 66,
+     "frames": 60,
+     "keyframes": 4,
+     "anomalies": [
+      "dom_bad_text",
+      "warning_toast"
+     ],
+     "predicted": "inventory-service:Reserve",
+     "truth": "inventory-service Reserve 503 (pool exhausted), gateway returned 502"
+    },
+    {
+     "scenario": "cors_network_failure",
+     "top1": true,
+     "rank_of_true_root": 1,
+     "spans": 63,
+     "frames": 60,
+     "keyframes": 4,
+     "anomalies": [
+      "dom_emptied",
+      "blank_region"
+     ],
+     "predicted": "web-frontend:GET /api/reviews",
+     "truth": "browser blocked /api/reviews (CORS, status 0)"
+    },
+    {
+     "scenario": "gateway_rate_limit",
+     "top1": true,
+     "rank_of_true_root": 1,
+     "spans": 67,
+     "frames": 60,
+     "keyframes": 5,
+     "anomalies": [
+      "error_banner",
+      "dom_error",
+      "error_banner"
+     ],
+     "predicted": "api-gateway:GET /api/search",
+     "truth": "api-gateway rate limiter (429)"
+    },
+    {
+     "scenario": "null_price_nan_total",
+     "top1": true,
+     "rank_of_true_root": 1,
+     "spans": 66,
+     "frames": 60,
+     "keyframes": 3,
+     "anomalies": [
+      "dom_bad_text"
+     ],
+     "predicted": "pricing-service:PriceLines",
+     "truth": "pricing-service returned null unit_price"
+    },
+    {
+     "scenario": "feature_flag_drift_modal",
+     "top1": true,
+     "rank_of_true_root": 1,
+     "spans": 66,
+     "frames": 60,
+     "keyframes": 4,
+     "anomalies": [
+      "modal_overlay"
+     ],
+     "predicted": "flags-service:GetFlags",
+     "truth": "flags-service served a config without 'new_checkout' (drift)"
+    },
+    {
+     "scenario": "deadlock_retries_exhausted",
+     "top1": true,
+     "rank_of_true_root": 1,
+     "spans": 68,
+     "frames": 60,
+     "keyframes": 3,
+     "anomalies": [
+      "dom_error",
+      "error_banner"
+     ],
+     "predicted": "postgres:INSERT orders",
+     "truth": "postgres deadlock on INSERT orders (retries exhausted)"
+    }
+   ]
+  },
+  "ablation_no_video_frames": {
+   "top1_accuracy": 0.8,
+   "mrr": 0.8
+  },
+  "heldout_seeds": {
+   "5": {
+    "top1_accuracy": 1.0,
+    "mrr": 1.0,
+    "latency_ms_mean": 13.587066702893935,
+    "latency_ms_max": 15.785541996592656,
+    "mean_spans_per_trace": 66.6,
+    "baselines_top1": {
+     "first_error_span": 0.0,
+     "last_error_span_before_symptom": 0.1,
+     "longest_span": 0.0,
+     "most_error_logs_span": 0.0
+    }
+   },
+   "23": {
+    "top1_accuracy": 1.0,
+    "mrr": 1.0,
+    "latency_ms_mean": 13.640762396971695,
+    "latency_ms_max": 15.897416014922783,
+    "mean_spans_per_trace": 66.6,
+    "baselines_top1": {
+     "first_error_span": 0.0,
+     "last_error_span_before_symptom": 0.1,
+     "longest_span": 0.0,
+     "most_error_logs_span": 0.0
+    }
+   }
+  }
+ },
+ "security": {
+  "dataset": "dev: 30 benign technical docs (hard negatives) + 25 injection payloads + 5 cyclic agent trajectories + 5 progressing trajectories; held-out: 12 benign + 12 payloads written after the detectors were frozen",
+  "combined_dev": {
+   "adversarial_items": 30,
+   "recall": 1.0,
+   "benign_items": 35,
+   "false_positive_rate": 0.0
+  },
+  "documents_dev": {
+   "benign": 30,
+   "malicious": 25,
+   "recall": 1.0,
+   "false_positive_rate": 0.0,
+   "precision": 1.0,
+   "latency_ms_p50": 0.04095799522474408,
+   "latency_ms_p95": 0.19632050534710288,
+   "latency_ms_max": 0.4709589993581176,
+   "per_category_recall": {
+    "role_hijack": 1.0,
+    "unicode_stego": 1.0,
+    "tool_smuggling": 1.0,
+    "obfuscated": 1.0
+   },
+   "missed": [],
+   "false_positives": []
+  },
+  "documents_heldout": {
+   "benign": 12,
+   "malicious": 12,
+   "recall": 1.0,
+   "false_positive_rate": 0.0,
+   "precision": 1.0,
+   "latency_ms_p50": 0.032062496757134795,
+   "latency_ms_p95": 0.11102869757451103,
+   "latency_ms_max": 0.1271250075660646,
+   "per_category_recall": {
+    "role_hijack": 1.0,
+    "tool_smuggling": 1.0,
+    "unicode_stego": 1.0,
+    "obfuscated": 1.0
+   },
+   "missed": [],
+   "false_positives": []
+  },
+  "loop_breaker": {
+   "loops": 5,
+   "benign_trajectories": 5,
+   "loop_detection_recall": 1.0,
+   "false_halt_rate": 0.0,
+   "mean_steps_to_halt": 4.8,
+   "mean_tokens_saved_of_60k_budget": 52800.0,
+   "ms_per_step_mean": 0.04624123759918121,
+   "trajectories": [
+    {
+     "id": "pingpong_edit",
+     "label": "loop",
+     "halted": true,
+     "step": 6,
+     "reason": "cycle of period 2 repeated 3x with identical observations",
+     "tokens_saved": 51000
+    },
+    {
+     "id": "repeat_search",
+     "label": "loop",
+     "halted": true,
+     "step": 3,
+     "reason": "cycle of period 1 repeated 3x with identical observations",
+     "tokens_saved": 55500
+    },
+    {
+     "id": "paraphrase_loop",
+     "label": "loop",
+     "halted": true,
+     "step": 3,
+     "reason": "cycle of period 1 repeated 3x with identical observations",
+     "tokens_saved": 55500
+    },
+    {
+     "id": "retry_storm",
+     "label": "loop",
+     "halted": true,
+     "step": 3,
+     "reason": "cycle of period 1 repeated 3x with identical observations",
+     "tokens_saved": 55500
+    },
+    {
+     "id": "nav_cycle",
+     "label": "loop",
+     "halted": true,
+     "step": 9,
+     "reason": "cycle of period 3 repeated 3x with identical observations",
+     "tokens_saved": 46500
+    },
+    {
+     "id": "pagination",
+     "label": "benign",
+     "halted": false,
+     "step": 15,
+     "reason": "progressing",
+     "tokens_saved": null
+    },
+    {
+     "id": "job_polling",
+     "label": "benign",
+     "halted": false,
+     "step": 14,
+     "reason": "progressing",
+     "tokens_saved": null
+    },
+    {
+     "id": "research",
+     "label": "benign",
+     "halted": false,
+     "step": 14,
+     "reason": "progressing",
+     "tokens_saved": null
+    },
+    {
+     "id": "multi_file_edit",
+     "label": "benign",
+     "halted": false,
+     "step": 13,
+     "reason": "progressing",
+     "tokens_saved": null
+    },
+    {
+     "id": "retry_then_success",
+     "label": "benign",
+     "halted": false,
+     "step": 4,
+     "reason": "progressing",
+     "tokens_saved": null
+    }
+   ]
+  }
+ },
+ "meta": {
+  "version": "1.0.0",
+  "python": "3.11.18",
+  "platform": "Darwin arm64",
+  "timestamp": "2026-11-14 06:14",
+  "suite_seconds": 13.959323791001225
+ }
+}
