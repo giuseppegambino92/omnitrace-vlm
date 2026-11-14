@@ -405,3 +405,7 @@ tests/                          63 tests (1 live-VLM test skipped unless OMNITRA
 * Latencies are single-threaded CPython on the machine named in the results header. They
   depend on hardware and background load; the repeatability block shows their spread over
   quiet-machine runs.
+
+## License
+
+[MIT](LICENSE) © 2026 Giuseppe Gambino

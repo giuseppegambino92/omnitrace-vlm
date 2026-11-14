@@ -425,3 +425,7 @@ tests/                          63 test (1 test con VLM reale saltato se non si 
 * Le latenze sono misurate con CPython a singolo thread sulla macchina indicata nell'intestazione
   dei risultati. Dipendono dall'hardware e dal carico in background; il blocco sulla ripetibilità
   ne mostra la variabilità su esecuzioni a macchina scarica.
+
+## Licenza
+
+[MIT](LICENSE) © 2026 Giuseppe Gambino
