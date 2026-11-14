@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "omnitrace"
+version = "1.0.0"
+description = "Multimodal late-interaction visual RAG, cross-modal causal timeline correlator and AI security engine (first-principles, framework-free)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "Pillow>=10.1",
+  "fastapi>=0.110",
+  "uvicorn>=0.27",
+  "typer>=0.12",
+  "rich>=13.7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "httpx>=0.27"]
+
+[project.scripts]
+omnitrace = "omnitrace.interfaces.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src", "."]
+include = ["omnitrace*", "evals*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = ["live: requires a running local/cloud VLM endpoint (skipped by default)"]
+filterwarnings = [
+  # third-party: starlette's TestClient nags about its httpx backend; irrelevant to omnitrace
+  "ignore:Using `httpx` with `starlette.testclient`",
+]

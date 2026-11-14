@@ -1,0 +1,38 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Bytecode and caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+
+# Build / packaging artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+
+# Local runtime caches (visual indexes, crops, scratch output)
+*.sqlite
+*.sqlite-journal
+omnitrace_index.sqlite*
+citation*.png
+evals/runs/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
