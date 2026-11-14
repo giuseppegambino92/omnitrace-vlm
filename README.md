@@ -378,7 +378,7 @@ evals/
   datasets/                     generators (layouts, ui_sim, traces, injection_corpus) + exported data
   latest_report.json            last full benchmark report
   repeatability_report.json     per-run values, intervals, verdict
-tests/                          63 tests (1 live-VLM test skipped unless OMNITRACE_LIVE_OLLAMA=<model>)
+tests/                          63 tests (the live-VLM test runs when a local Ollama has a vision model)
 ```
 
 ---

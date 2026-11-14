@@ -397,7 +397,7 @@ evals/
   datasets/                     generatori (layouts, ui_sim, traces, injection_corpus) + dati esportati
   latest_report.json            ultimo report completo dei benchmark
   repeatability_report.json     valori per esecuzione, intervalli, verdetto
-tests/                          63 test (1 test con VLM reale saltato se non si imposta OMNITRACE_LIVE_OLLAMA=<modello>)
+tests/                          63 test (quello con VLM reale parte se Ollama ha un modello visivo)
 ```
 
 ---

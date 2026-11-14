@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import re
 from dataclasses import replace
 
 import numpy as np
@@ -169,8 +170,42 @@ def test_answer_with_citation_offline(visual_index):
     assert res["crop_png_b64"] and res["answer_blocked"] is False
 
 
+def _live_ollama() -> OllamaVLM:
+    """A local Ollama adapter bound to an installed vision model, or skip with the reason.
+
+    OMNITRACE_OLLAMA_URL overrides the server (default http://localhost:11434) and
+    OMNITRACE_LIVE_OLLAMA pins a model; otherwise the first vision-capable model is used.
+    """
+    import urllib.request
+
+    base = os.environ.get("OMNITRACE_OLLAMA_URL", "http://localhost:11434").rstrip("/")
+
+    def call(path, body=None):
+        req = urllib.request.Request(base + path, data=None if body is None else json.dumps(body).encode(),
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            return json.load(r)
+
+    try:
+        installed = [m["name"] for m in call("/api/tags").get("models", [])]
+    except OSError:
+        pytest.skip(f"no Ollama server at {base}")
+    pinned = os.environ.get("OMNITRACE_LIVE_OLLAMA")
+    for name in [pinned] if pinned else installed:
+        try:
+            if "vision" in call("/api/show", {"model": name}).get("capabilities", []):
+                return OllamaVLM(model=name, base_url=base)
+        except OSError:
+            continue
+    pytest.skip(f"model {pinned!r} is not a vision model on {base}" if pinned
+                else f"no vision model installed on {base} (e.g. `ollama pull qwen2.5vl:3b`)")
+
+
 @pytest.mark.live
-@pytest.mark.skipif(not os.environ.get("OMNITRACE_LIVE_OLLAMA"), reason="set OMNITRACE_LIVE_OLLAMA=<model> to run")
 def test_live_ollama(visual_index):
-    res = answer_with_citation(visual_index, "Payment Latency card", OllamaVLM(model=os.environ["OMNITRACE_LIVE_OLLAMA"]))
-    assert res["citation"]["page_id"] == "ui-0"
+    vlm = _live_ollama()
+    res = answer_with_citation(visual_index, "What is the Payment Latency value?", vlm)
+    value = re.search(r"Payment Latency\s+(\d+)\s*ms", res["citation"]["region_text"])
+    assert res["citation"]["page_id"] == "ui-0" and value, res["citation"]
+    assert res["vlm"] == "ollama" and res["answer_blocked"] is False
+    assert value.group(1) in res["answer"], f"{vlm.model} answered {res['answer']!r}, expected {value.group(1)} ms"
