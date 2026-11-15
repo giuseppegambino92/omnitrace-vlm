@@ -2,6 +2,8 @@
 
 **English** · [Italiano](README.it.md)
 
+<a href="https://paypal.me/giuseppegambino92"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate with PayPal"></a>
+
 **Multimodal late-interaction visual RAG · cross-modal causal timeline correlator · AI security engine**
 
 omnitrace is built from first principles: `numpy`, `scipy`, `Pillow`, `sqlite3`, plus
@@ -409,3 +411,9 @@ tests/                          63 tests (the live-VLM test runs when a local Ol
 ## License
 
 [MIT](LICENSE) © 2026 Giuseppe Gambino
+
+## Support the project
+
+If this project is useful to you, you can support its development with a donation on PayPal:
+
+<a href="https://paypal.me/giuseppegambino92"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate with PayPal"></a>
