@@ -51,6 +51,32 @@ facoltativa, per *leggere* l'evidenza che omnitrace ha già recuperato e localiz
 > i template del dev: dimostrano robustezza alla randomizzazione, non a nuovi tipi di documenti,
 > applicazioni o attacchi. Vedi [Limiti](#limiti).
 
+## Screenshot
+
+Registrati da esecuzioni reali di `omnitrace` sui dati sintetici inclusi in `evals/datasets/`,
+senza rete e senza VLM. `python scripts/make_screenshots.py` li rigenera (in inglese e in
+italiano); le latenze dipendono dalla macchina su cui gira.
+
+**Citazione visuale.** `index --demo` codifica il corpus di benchmark da 15 pagine (byte per
+patch a ogni precisione); `query` restituisce la pagina migliore con il bounding box della cella
+che contiene la risposta, il ruolo e il testo della regione, i picchi di attivazione per token e
+la heatmap 2-D aggregata con il bbox evidenziato.
+
+![omnitrace index --demo e query: citazione visuale con bounding box e heatmap di attivazione](docs/images/it/query.svg)
+
+**Analisi della causa radice.** `rca --demo payment_db_timeout`: i sintomi rilevati nei pixel e
+nel DOM, la classifica degli span candidati con evidenze e fattore di origine, il percorso causale
+dal timeout dello statement Postgres al banner di errore rosso e la timeline di keyframe / DOM /
+span / sintomi.
+
+![omnitrace rca --demo payment_db_timeout: anomalie, classifica delle cause radice, percorso causale e timeline](docs/images/it/rca.svg)
+
+**Injection shield.** Un output di tool preso dal corpus di iniezioni (`attack/calendar_invite`)
+viene bloccato: rischio noisy-OR sopra la soglia di 0,8, i due detector che sono scattati con la
+loro severità e l'evidenza individuata. Il comando termina con exit code 2.
+
+![omnitrace shield: un invito di calendario con un'istruzione iniettata viene bloccato](docs/images/it/shield.svg)
+
 ---
 
 ## Risultati
@@ -173,7 +199,7 @@ _3 esecuzioni consecutive il 2026-11-14 06:14 su Darwin arm64 (14 CPU logiche), 
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
-pytest                                   # 63 test, ~8 s, completamente offline
+pytest                                   # 73 test, ~8 s, completamente offline
 python -m evals.benchmark_suite          # ~20-40 s; scrive evals/latest_report.json + i blocchi metriche di entrambi i README
 python -m evals.repeat_runs --update-metrics   # 3 esecuzioni con gate sul carico + intervalli di ripetibilità in entrambi i README
 omnitrace dash                           # citazione con heatmap, timeline causale e allarmi di sicurezza nel terminale
@@ -195,7 +221,18 @@ cat page.html | omnitrace shield - --source dom_text --spotlight datamark
 
 omnitrace serve                    # MCP su HTTP streamable a http://127.0.0.1:8765/mcp
 omnitrace serve --stdio            # MCP su stdio
+
+# Lingua dell'output: inglese di default, italiano con --lang it (prima del comando) o OMNITRACE_LANG=it
+omnitrace --lang it rca --demo payment_db_timeout
+OMNITRACE_LANG=it omnitrace dash
 ```
+
+`--lang [en|it]` (oppure la variabile d'ambiente `OMNITRACE_LANG`; l'opzione ha la precedenza)
+traduce l'output leggibile: messaggi, errori, titoli e intestazioni delle tabelle, etichette, righe
+di stato e help dei comandi. L'output machine-readable non viene mai tradotto: `--json`, risposte
+MCP, file di report, identificatori, stringhe di evidenza dei detector e prompt inviati al VLM
+restano invariati. Le parti fisse dell'help generate da Typer (`Usage`, `Options`, `--help`)
+restano in inglese.
 
 File di structure layer affiancato alla pagina (`page.json`), cioè ciò che forniscono il layer di
 testo di un PDF, uno snapshot del DOM o un export SVG:
@@ -392,6 +429,7 @@ src/omnitrace/
   security/injection_shield.py  InjectionShield, spotlighting, ToolCallGuard
   security/loop_breaker.py      LoopBreaker
   interfaces/{mcp_server,cli,tui}.py
+  i18n.py                       catalogo dei messaggi inglese / italiano per CLI e TUI (--lang, OMNITRACE_LANG)
 evals/
   benchmark_suite.py            i quattro benchmark, baseline, ablazioni, scrittura dei README (en + it)
   repeat_runs.py                esecuzioni ripetute con gate sul carico della macchina + verdetto di ripetibilità
@@ -399,7 +437,8 @@ evals/
   datasets/                     generatori (layouts, ui_sim, traces, injection_corpus) + dati esportati
   latest_report.json            ultimo report completo dei benchmark
   repeatability_report.json     valori per esecuzione, intervalli, verdetto
-tests/                          63 test (quello con VLM reale parte se Ollama ha un modello visivo)
+tests/                          73 test (quello con VLM reale parte se Ollama ha un modello visivo)
+scripts/make_screenshots.py     rigenera docs/images/{en,it}/*.svg da esecuzioni reali della CLI
 ```
 
 ---

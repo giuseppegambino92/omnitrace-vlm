@@ -4,19 +4,67 @@ from __future__ import annotations
 
 import json
 import sys
+from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Annotated, Any, Optional
 
 import numpy as np
 import typer
 from PIL import Image
 from rich.console import Console
+from typer.core import TyperGroup
 
+from omnitrace import i18n
 from omnitrace.config import OmnitraceConfig
+from omnitrace.i18n import t
 
-app = typer.Typer(add_completion=False, no_args_is_help=True,
-                  help="omnitrace: visual late-interaction RAG, cross-modal RCA and AI security engine.")
+
+class Lang(str, Enum):
+    en = "en"
+    it = "it"
+
+
+def _scan_lang(args: list[str], commands: Any) -> str | None:
+    """The ``--lang`` value given before the sub-command, read ahead of Click's own parsing so that
+    help texts (including ``--help``, which Click handles eagerly) can be localised too."""
+    for i, tok in enumerate(args):
+        if tok in commands:
+            break
+        if tok == "--lang" and i + 1 < len(args):
+            return args[i + 1]
+        if tok.startswith("--lang="):
+            return tok.split("=", 1)[1]
+    return None
+
+
+def _localize_help(group: Any) -> None:
+    """Rewrite the help texts of the command tree in the current language (keys ``help.*``)."""
+    group.help = t("help.app")
+    for p in group.params:
+        if i18n.has_key(f"help.{p.name}"):
+            p.help = t(f"help.{p.name}")
+    for name, cmd in group.commands.items():
+        cmd.help = t(f"help.cmd.{name}")
+        for p in cmd.params:
+            if i18n.has_key(key := f"help.opt.{name}.{p.name}"):
+                p.help = t(key)
+
+
+class LocalizedGroup(TyperGroup):
+    def make_context(self, info_name: str | None, args: list[str], parent: Any = None, **extra: Any) -> Any:
+        i18n.set_lang(_scan_lang(args, self.commands))     # None -> $OMNITRACE_LANG -> en
+        _localize_help(self)
+        return super().make_context(info_name, args, parent, **extra)
+
+
+app = typer.Typer(cls=LocalizedGroup, add_completion=False, no_args_is_help=True, help=t("help.app"))
 console = Console()
+
+
+@app.callback()
+def _root(lang: Annotated[Lang | None, typer.Option("--lang", case_sensitive=False)] = None) -> None:
+    # help texts of the whole command tree, this option included, come from the catalog: see _localize_help
+    i18n.set_lang(lang.value if lang else None)
 
 
 def _cfg(db: Optional[Path]) -> OmnitraceConfig:
@@ -47,9 +95,8 @@ def _load_pages(path: Path):
 
 
 @app.command()
-def index(path: Optional[Path] = typer.Argument(None, help="directory of page images (+ .json structure layers)"),
-          db: Optional[Path] = typer.Option(None, help="SQLite index path (default: $OMNITRACE_DB or ./omnitrace_index.sqlite)"),
-          demo: bool = typer.Option(False, help="index the synthetic 15-page benchmark corpus")):
+def index(path: Optional[Path] = typer.Argument(None), db: Optional[Path] = typer.Option(None),
+          demo: bool = typer.Option(False)):
     """Encode pages into a multi-vector visual index."""
     from omnitrace.vision.spatial_maxsim import VisualIndex
 
@@ -60,23 +107,23 @@ def index(path: Optional[Path] = typer.Argument(None, help="directory of page im
     elif path is not None:
         pages = _load_pages(path)
     else:
-        raise typer.BadParameter("give a directory or --demo")
+        raise typer.BadParameter(t("cli.err.index_source"))
     if not pages:
-        raise typer.BadParameter(f"no images found in {path}")
+        raise typer.BadParameter(t("cli.err.no_images", path=path))
     idx = VisualIndex(cfg.vision)
-    with console.status(f"encoding {len(pages)} pages"):
+    with console.status(t("cli.status.encoding", n=len(pages))):
         idx.add_pages(pages)
     out = idx.save(cfg.db_path)
     bpp = idx.bytes_per_patch()
-    console.print(f"[green]indexed[/] {len(pages)} pages × {idx.n_patches} patches → {out} "
-                  f"(bytes/patch: f32 {bpp['float32']}, int8 {bpp['int8']}, 2-bit {bpp['int2']}, 1-bit {bpp['binary']})")
+    console.print(t("cli.indexed", n=len(pages), patches=idx.n_patches, out=out, f32=bpp["float32"],
+                    int8=bpp["int8"], int2=bpp["int2"], binary=bpp["binary"]))
 
 
 @app.command()
 def query(text: str, db: Optional[Path] = typer.Option(None), k: int = 3,
-          precision: str = typer.Option("int8", help="float32 | int8 | int2 | binary"),
-          crop: Optional[Path] = typer.Option(None, help="write the top hit's bbox crop to this PNG"),
-          vlm: Optional[str] = typer.Option(None, help="read the crop with a VLM: ollama:<model> | openai:<model>@<url>"),
+          precision: str = typer.Option("int8"),
+          crop: Optional[Path] = typer.Option(None),
+          vlm: Optional[str] = typer.Option(None),
           as_json: bool = typer.Option(False, "--json")):
     """Retrieve pages and ground the answer to a bounding box."""
     from omnitrace.interfaces.tui import render_hit
@@ -98,12 +145,12 @@ def query(text: str, db: Optional[Path] = typer.Option(None), k: int = 3,
             console.print(render_hit(h, enc.width, enc.height))
     if crop and hits:
         Image.fromarray(idx.crop(hits[0])).save(crop)
-        console.print(f"[green]crop written[/] {crop}")
+        console.print(t("cli.crop_written", path=crop))
 
 
 @app.command()
-def rca(trace: Optional[Path] = typer.Argument(None, help="TraceBundle JSON"),
-        demo: Optional[str] = typer.Option(None, help="run a synthetic scenario by name (or 'list')"),
+def rca(trace: Optional[Path] = typer.Argument(None),
+        demo: Optional[str] = typer.Option(None),
         as_json: bool = typer.Option(False, "--json")):
     """Cross-modal root-cause analysis of one failing execution."""
     from omnitrace.correlator.rca_engine import analyze
@@ -118,12 +165,12 @@ def rca(trace: Optional[Path] = typer.Argument(None, help="TraceBundle JSON"),
             return
         case = next((c for c in build_trace_cases() if c.name == demo), None)
         if case is None:
-            raise typer.BadParameter(f"unknown scenario {demo!r}")
+            raise typer.BadParameter(t("cli.err.unknown_scenario", name=demo))
         bundle = case.bundle
     elif trace:
         bundle = TraceBundle.from_dict(json.loads(trace.read_text()))
     else:
-        raise typer.BadParameter("give a trace file or --demo")
+        raise typer.BadParameter(t("cli.err.rca_source"))
     rep = analyze(bundle)
     if as_json:
         console.print_json(json.dumps(rep.to_dict()))
@@ -132,9 +179,9 @@ def rca(trace: Optional[Path] = typer.Argument(None, help="TraceBundle JSON"),
 
 
 @app.command()
-def shield(file: str = typer.Argument("-", help="file to scan, or - for stdin"),
+def shield(file: str = typer.Argument("-"),
            source: str = typer.Option("document"),
-           spotlight: str = typer.Option("none", help="none | datamark | delimit | base64"),
+           spotlight: str = typer.Option("none"),
            as_json: bool = typer.Option(False, "--json")):
     """Scan untrusted content for indirect prompt injection; exit code 2 when blocked."""
     from omnitrace.interfaces.tui import render_security
@@ -154,13 +201,13 @@ def shield(file: str = typer.Argument("-", help="file to scan, or - for stdin"),
             console.print(f"  [red]•[/] {f.detector} ({f.severity:.2f}): {f.evidence}")
         if spotlight != "none" and not v.blocked:
             sp = sh.spotlight(text, spotlight)
-            console.print(f"[dim]system note:[/] {sp['system_note']}\n{sp['content']}")
+            console.print(f"[dim]{t('cli.system_note')}[/] {sp['system_note']}\n{sp['content']}")
     raise typer.Exit(2 if v.blocked else 0)
 
 
 @app.command("eval")
 def eval_(output: Path = typer.Option(Path("evals/latest_report.json")),
-          readme: bool = typer.Option(False, help="also refresh the metrics block in README.md")):
+          readme: bool = typer.Option(False)):
     """Run the full benchmark suite."""
     from evals.benchmark_suite import main as run_suite
     run_suite(output=output, update_readme=readme)
@@ -174,7 +221,7 @@ def dash():
 
 
 @app.command()
-def serve(host: str = "127.0.0.1", port: int = 8765, stdio: bool = typer.Option(False, help="use the stdio transport"),
+def serve(host: str = "127.0.0.1", port: int = 8765, stdio: bool = typer.Option(False),
           db: Optional[Path] = typer.Option(None)):
     """Run the MCP server (streamable HTTP on /mcp, or stdio)."""
     from omnitrace.interfaces.mcp_server import MCPServer, create_app, serve_stdio

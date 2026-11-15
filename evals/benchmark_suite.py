@@ -35,6 +35,7 @@ from evals.datasets.ui_sim import dedup_session
 from omnitrace import __version__
 from omnitrace.config import DedupConfig, VisionConfig
 from omnitrace.correlator.rca_engine import analyze
+from omnitrace.i18n import t as _t
 from omnitrace.security.injection_shield import InjectionShield
 from omnitrace.security.loop_breaker import LoopBreaker
 from omnitrace.vision.phash_dedup import KeyframeExtractor, frame_features, hamming
@@ -83,7 +84,7 @@ def _eval_grounding(searcher, pages, queries) -> dict:
 
 
 def bench_grounding() -> dict:
-    _log("[1/4] 2-D bounding-box grounding")
+    _log(_t("eval.step.grounding"))
     out: dict = {"dataset": "15 synthetic technical pages x 4 queries (tables, schematics, multi-column specs, "
                             "UI viewports, charts); hit = correct page and IoU >= 0.5 with the answer region"}
     pages, queries = build_layout_corpus(DEV_LAYOUT_SEED)
@@ -135,15 +136,14 @@ def bench_grounding() -> dict:
         }
     out["heldout_seeds"] = held
     out["heldout_mean_region_recall@1_int8"] = float(np.mean([v["omnitrace_int8"]["region_recall@1"] for v in held.values()]))
-    _log(f"      dev int8 region R@1 = {dev['omnitrace_int8']['region_recall@1']:.3f}  "
-         f"flat-BM25 = {dev['baseline_flat_text_chunk_bm25']['region_recall@1']:.3f}  "
-         f"held-out = {out['heldout_mean_region_recall@1_int8']:.3f}")
+    _log(_t("eval.res.grounding", dev=dev["omnitrace_int8"]["region_recall@1"],
+           bm25=dev["baseline_flat_text_chunk_bm25"]["region_recall@1"], held=out["heldout_mean_region_recall@1_int8"]))
     return out
 
 
 # ------------------------------------------------------------------------------ 2. dedup
 def bench_dedup() -> dict:
-    _log("[2/4] keyframe deduplication")
+    _log(_t("eval.step.dedup"))
     rec = dedup_session()
     ex = KeyframeExtractor()
     ex.extract(rec.frames[:10], rec.times[:10])  # warm-up
@@ -175,8 +175,8 @@ def bench_dedup() -> dict:
         },
     }
     o = out["omnitrace"]
-    _log(f"      pruned {o['redundant_frames_eliminated']:.1%} at {o['ms_per_frame_median']:.3f} ms/frame, "
-         f"recall {o['transition_recall']:.0%}")
+    _log(_t("eval.res.dedup", pruned=o["redundant_frames_eliminated"], ms=o["ms_per_frame_median"],
+           recall=o["transition_recall"]))
     return out
 
 
@@ -230,7 +230,7 @@ def _rca_split(seed: int, with_frames: bool = True) -> dict:
 
 
 def bench_rca() -> dict:
-    _log("[3/4] cross-modal root-cause analysis")
+    _log(_t("eval.step.rca"))
     dev = _rca_split(DEV_TRACE_SEED)
     out = {"dataset": "10 failing 12 s storefront sessions (60 frames @5 fps, DOM log, ~66 spans across ~14 services, "
                       "logs) with injected root causes and distractors",
@@ -238,14 +238,14 @@ def bench_rca() -> dict:
            "ablation_no_video_frames": {k: v for k, v in _rca_split(DEV_TRACE_SEED, with_frames=False).items()
                                         if k in ("top1_accuracy", "mrr")},
            "heldout_seeds": {str(s): {k: v for k, v in _rca_split(s).items() if k != "cases"} for s in HELDOUT_TRACE_SEEDS}}
-    _log(f"      top-1 {dev['top1_accuracy']:.0%} (baselines: " +
-         ", ".join(f"{k} {v:.0%}" for k, v in dev["baselines_top1"].items()) + ")")
+    _log(_t("eval.res.rca", top1=dev["top1_accuracy"],
+           baselines=", ".join(f"{k} {v:.0%}" for k, v in dev["baselines_top1"].items())))
     return out
 
 
 # ------------------------------------------------------------------------------ 4. security
 def bench_security() -> dict:
-    _log("[4/4] injection shield + loop breaker")
+    _log(_t("eval.step.security"))
     docs, trajs = build_security_corpus()
     sh = InjectionShield()
     for d in docs:
@@ -310,8 +310,8 @@ def bench_security() -> dict:
            "combined_dev": {"adversarial_items": n_adv, "recall": caught / n_adv, "benign_items": n_ben,
                             "false_positive_rate": false_alarms / n_ben},
            "documents_dev": dev, "documents_heldout": held, "loop_breaker": loop_res}
-    _log(f"      dev recall {out['combined_dev']['recall']:.0%} FPR {out['combined_dev']['false_positive_rate']:.0%}; "
-         f"held-out recall {held['recall']:.0%} FPR {held['false_positive_rate']:.0%}; p95 {dev['latency_ms_p95']:.2f} ms")
+    _log(_t("eval.res.security", recall=out["combined_dev"]["recall"], fpr=out["combined_dev"]["false_positive_rate"],
+           held_recall=held["recall"], held_fpr=held["false_positive_rate"], p95=dev["latency_ms_p95"]))
     return out
 
 
@@ -496,7 +496,7 @@ def main(output: Path | None = None, update_readme: bool = True, export: bool = 
         export_datasets()
     if update_readme:
         write_readme_metrics(report)
-    _log(f"report written to {output} ({report['meta']['suite_seconds']:.0f} s)")
+    _log(_t("eval.done", path=output, seconds=report["meta"]["suite_seconds"]))
     return report
 
 

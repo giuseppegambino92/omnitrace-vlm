@@ -51,6 +51,32 @@ models and no OCR, and every test and benchmark runs offline and deterministical
 > templates, though, so they show robustness to randomisation, not to new kinds of
 > documents, apps or attacks. See [Limitations](#limitations).
 
+## Screenshots
+
+Recorded from real `omnitrace` runs on the bundled synthetic data in `evals/datasets/`, with no
+network and no VLM. `python scripts/make_screenshots.py` regenerates them (English and Italian);
+the latency figures depend on the machine that runs it.
+
+**Visual citation.** `index --demo` encodes the 15-page benchmark corpus (bytes per patch at each
+precision); `query` returns the top page with the grounded bounding box of the answer cell, its
+region role and text, the per-token activation peaks and the pooled 2-D heatmap with the bbox
+outlined.
+
+![omnitrace index --demo and query: visual citation with bounding box and activation heatmap](docs/images/en/query.svg)
+
+**Root-cause analysis.** `rca --demo payment_db_timeout`: the symptoms detected in pixels and DOM,
+the ranked candidate spans with their evidence and origin factor, the causal path from the
+Postgres statement timeout to the red error banner, and the keyframe / DOM / span / symptom
+timeline.
+
+![omnitrace rca --demo payment_db_timeout: anomalies, root-cause ranking, causal path and timeline](docs/images/en/rca.svg)
+
+**Injection shield.** A tool output from the injection corpus (`attack/calendar_invite`) is
+blocked: noisy-OR risk above the 0.8 threshold, the two detectors that fired with their severity
+and the matched evidence. The command exits with code 2.
+
+![omnitrace shield: a calendar invite carrying an injected instruction is blocked](docs/images/en/shield.svg)
+
 ---
 
 ## Results
@@ -167,7 +193,7 @@ _3 consecutive runs on 2026-11-14 06:14 on Darwin arm64 (14 logical CPUs), each 
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
-pytest                                   # 63 tests, ~8 s, fully offline
+pytest                                   # 73 tests, ~8 s, fully offline
 python -m evals.benchmark_suite          # ~20-40 s; writes evals/latest_report.json + both README metric blocks
 python -m evals.repeat_runs --update-metrics   # 3 gated runs + repeatability intervals in both READMEs
 omnitrace dash                           # heatmap citation, causal timeline and security alerts in the terminal
@@ -189,7 +215,17 @@ cat page.html | omnitrace shield - --source dom_text --spotlight datamark
 
 omnitrace serve                    # MCP over streamable HTTP at http://127.0.0.1:8765/mcp
 omnitrace serve --stdio            # MCP over stdio
+
+# Output language: English by default, Italian with --lang it (before the command) or OMNITRACE_LANG=it
+omnitrace --lang it rca --demo payment_db_timeout
+OMNITRACE_LANG=it omnitrace dash
 ```
+
+`--lang [en|it]` (or the `OMNITRACE_LANG` environment variable; the flag wins) translates the
+human-readable output: messages, errors, table titles and headers, labels, status lines and the
+command help. Machine-readable output is never translated: `--json`, MCP responses, report files,
+identifiers, detector evidence strings and prompts sent to the VLM stay as they are. Typer's own
+help chrome (`Usage`, `Options`, `--help`) stays in English.
 
 Structure-layer sidecar (`page.json`), which is what a PDF text layer, DOM snapshot or SVG export
 provides:
@@ -373,6 +409,7 @@ src/omnitrace/
   security/injection_shield.py  InjectionShield, spotlighting, ToolCallGuard
   security/loop_breaker.py      LoopBreaker
   interfaces/{mcp_server,cli,tui}.py
+  i18n.py                       English / Italian message catalog for the CLI and TUI (--lang, OMNITRACE_LANG)
 evals/
   benchmark_suite.py            the four benchmarks, baselines, ablations, README writer (en + it)
   repeat_runs.py                quiet-machine gated repeat runs + repeatability verdict
@@ -380,7 +417,8 @@ evals/
   datasets/                     generators (layouts, ui_sim, traces, injection_corpus) + exported data
   latest_report.json            last full benchmark report
   repeatability_report.json     per-run values, intervals, verdict
-tests/                          63 tests (the live-VLM test runs when a local Ollama has a vision model)
+tests/                          73 tests (the live-VLM test runs when a local Ollama has a vision model)
+scripts/make_screenshots.py     regenerates docs/images/{en,it}/*.svg from real CLI runs
 ```
 
 ---

@@ -12,6 +12,7 @@ from rich.tree import Tree
 
 from omnitrace.correlator.rca_engine import RCAReport
 from omnitrace.correlator.timeline_dag import Anomaly, DomMutation, Span, TraceBundle
+from omnitrace.i18n import t
 from omnitrace.security.injection_shield import ShieldVerdict
 from omnitrace.security.loop_breaker import LoopVerdict
 from omnitrace.vision.spatial_maxsim import GroundedHit
@@ -22,7 +23,7 @@ _HEAT_STYLES = ["grey23", "grey37", "grey50", "dark_orange3", "orange3", "dark_o
 
 def heatmap_text(heat: np.ndarray, bbox_cells: tuple[int, int, int, int] | None = None) -> Text:
     """Render a heatmap (values in [0,1]) as shaded characters; bbox cells are outlined."""
-    t = Text()
+    out = Text()
     gr, gc = heat.shape
     for r in range(gr):
         for c in range(gc):
@@ -35,9 +36,9 @@ def heatmap_text(heat: np.ndarray, bbox_cells: tuple[int, int, int, int] | None 
                 on_edge = (r1 <= r <= r2 and c1 <= c <= c2) and (r in (r1, r2) or c in (c1, c2))
                 if on_edge:
                     ch, style = ("█" if k > 4 else "▒"), "bold bright_cyan"
-            t.append(ch * 2, style=style)
-        t.append("\n")
-    return t
+            out.append(ch * 2, style=style)
+        out.append("\n")
+    return out
 
 
 def bbox_to_cells(bbox, width: int, height: int, grid: tuple[int, int]) -> tuple[int, int, int, int]:
@@ -58,51 +59,56 @@ def render_hit(hit: GroundedHit, width: int, height: int, max_rows: int = 16) ->
     heat = _pool(hit.heatmap, f) if f > 1 else hit.heatmap
     cells = bbox_to_cells(hit.bbox, width, height, heat.shape)
     meta = Table.grid(padding=(0, 1))
-    meta.add_row("[bold]page[/]", hit.page_id, "[bold]score[/]", f"{hit.score:.3f}")
-    meta.add_row("[bold]bbox[/]", "(" + ", ".join(f"{v:.0f}" for v in hit.bbox) + ")", "[bold]grounding[/]", hit.grounding)
-    meta.add_row("[bold]region[/]", f"{hit.region_role}: {hit.region_text[:60]!r}", "[bold]latency[/]", f"{hit.latency_ms:.1f} ms")
-    peaks = ", ".join(f"{t}@({r},{c}) {s:.2f}" for t, (r, c, s) in hit.token_peaks.items())
-    return Panel(Group(meta, Text(f"token peaks: {peaks}", style="dim"), heatmap_text(heat, cells)),
-                 title=f"#{hit.rank + 1} visual citation", border_style="cyan")
+    def label(key: str) -> Text:
+        return Text(t(key), style="bold")
+
+    meta.add_row(label("tui.hit.page"), hit.page_id, label("tui.hit.score"), f"{hit.score:.3f}")
+    meta.add_row(label("tui.hit.bbox"), "(" + ", ".join(f"{v:.0f}" for v in hit.bbox) + ")", label("tui.hit.grounding"),
+                 hit.grounding)
+    meta.add_row(label("tui.hit.region"), f"{hit.region_role}: {hit.region_text[:60]!r}", label("tui.hit.latency"),
+                 f"{hit.latency_ms:.1f} ms")
+    peaks = ", ".join(f"{tok}@({r},{c}) {s:.2f}" for tok, (r, c, s) in hit.token_peaks.items())
+    return Panel(Group(meta, Text(t("tui.hit.token_peaks", peaks=peaks), style="dim"), heatmap_text(heat, cells)),
+                 title=t("tui.hit.title", rank=hit.rank + 1), border_style="cyan")
 
 
 def _node_label(node: object) -> str:
     if isinstance(node, Span):
         st = f" [{node.status_code}]" if node.status_code is not None else ""
         err = " [red]ERR[/]" if node.error else ""
-        return f"[yellow]span[/] {node.service} · {node.name}{st}{err}  [dim]{node.start:.2f}-{node.end:.2f}s[/]"
+        return f"[yellow]{t('tui.node.span')}[/] {node.service} · {node.name}{st}{err}  [dim]{node.start:.2f}-{node.end:.2f}s[/]"
     if isinstance(node, DomMutation):
-        return f"[magenta]dom[/] {node.op} {node.selector} {node.text[:40]!r}  [dim]@{node.t:.2f}s[/]"
+        return f"[magenta]{t('tui.node.dom')}[/] {node.op} {node.selector} {node.text[:40]!r}  [dim]@{node.t:.2f}s[/]"
     if isinstance(node, Anomaly):
-        return f"[bold red]symptom[/] {node.kind} ({node.source}) bbox={tuple(round(v) for v in node.bbox) if node.bbox else None}  [dim]@{node.t_start:.2f}s[/]"
+        return f"[bold red]{t('tui.node.symptom')}[/] {node.kind} ({node.source}) bbox={tuple(round(v) for v in node.bbox) if node.bbox else None}  [dim]@{node.t_start:.2f}s[/]"
     return str(node)
 
 
 def render_rca(report: RCAReport, bundle: TraceBundle | None = None, top: int = 5) -> Group:
     parts = []
-    an = Table(title="visible anomalies", show_lines=False, expand=False)
+    an = Table(title=t("tui.rca.anomalies"), show_lines=False, expand=False)
     for col in ("t", "kind", "source", "severity", "detail"):
-        an.add_column(col)
+        an.add_column(t(f"tui.rca.col.{col}"))
     for a in report.anomalies:
         an.add_row(f"{a.t_start:.2f}", a.kind, a.source, f"{a.severity:.1f}", a.detail[:60])
     parts.append(an)
-    ct = Table(title="root-cause ranking", expand=False)
-    for col in ("#", "score", "service", "operation", "evidence", "origin"):
-        ct.add_column(col)
+    ct = Table(title=t("tui.rca.ranking"), expand=False)
+    for col in ("rank", "score", "service", "operation", "evidence", "origin"):
+        ct.add_column(t(f"tui.rca.col.{col}"))
     for i, c in enumerate(report.candidates[:top]):
         ct.add_row(str(i + 1), f"{c.score:.4f}", c.span.service, c.span.name, "; ".join(c.evidence.reasons)[:70],
                    f"{c.origin:.2f}")
     parts.append(ct)
     if report.root:
-        tree = Tree("[bold]causal path (root → symptom)[/]")
+        tree = Tree(Text(t("tui.rca.path"), style="bold"))
         node = tree
         for key in report.root.path:
             node = node.add(_node_label(report.dag.nodes.get(key, key)))
         parts.append(tree)
     if bundle is not None:
         parts.append(timeline_strip(report, bundle))
-    parts.append(Text(f"frames {report.n_frames} → keyframes {len(report.keyframes)} · DAG {len(report.dag.nodes)} nodes / "
-                      f"{report.dag.n_edges} edges · {report.elapsed_ms:.1f} ms", style="dim"))
+    parts.append(Text(t("tui.rca.footer", frames=report.n_frames, keyframes=len(report.keyframes),
+                        nodes=len(report.dag.nodes), edges=report.dag.n_edges, ms=report.elapsed_ms), style="dim"))
     return Group(*parts)
 
 
@@ -112,43 +118,47 @@ def timeline_strip(report: RCAReport, bundle: TraceBundle, width: int = 56) -> T
     def col(t: float) -> int:
         return max(0, min(width - 1, int(t / t_end * (width - 1))))
 
-    rows = {"frames ": [" "] * width, "dom    ": [" "] * width, "spans  ": [" "] * width, "symptom": [" "] * width}
+    rows = {"frames": [" "] * width, "dom": [" "] * width, "spans": [" "] * width, "symptom": [" "] * width}
     for i in report.keyframes:
         if bundle.frame_times and i < len(bundle.frame_times):
-            rows["frames "][col(bundle.frame_times[i])] = "▮"
+            rows["frames"][col(bundle.frame_times[i])] = "▮"
     for m in bundle.dom:
-        rows["dom    "][col(m.t)] = "◆"
+        rows["dom"][col(m.t)] = "◆"
     for s in bundle.spans:
         if s.error or (s.status_code or 0) >= 400:
-            rows["spans  "][col(min(s.end, t_end))] = "✖"
+            rows["spans"][col(min(s.end, t_end))] = "✖"
     for a in report.anomalies:
         rows["symptom"][col(a.t_start)] = "▲"
-    out = Text("timeline (0 → %.1fs)\n" % t_end, style="bold")
-    styles = {"frames ": "cyan", "dom    ": "magenta", "spans  ": "red", "symptom": "bold red"}
+    out = Text(t("tui.timeline.title", t_end=t_end) + "\n", style="bold")
+    styles = {"frames": "cyan", "dom": "magenta", "spans": "red", "symptom": "bold red"}
+    labels = {k: t(f"tui.timeline.{k}") for k in rows}
+    pad = max(len(v) for v in labels.values())
     for k, r in rows.items():
-        out.append(f"{k} │", style="dim")
+        out.append(f"{labels[k]:<{pad}} │", style="dim")
         out.append("".join(r), style=styles[k])
         out.append("│\n", style="dim")
     return out
 
 
 def render_security(items: list[tuple[str, ShieldVerdict]]) -> Table:
-    tb = Table(title="injection shield", expand=False)
-    for col in ("item", "verdict", "risk", "top findings", "ms"):
-        tb.add_column(col)
+    tb = Table(title=t("tui.shield.title"), expand=False)
+    for col in ("item", "verdict", "risk", "findings", "ms"):
+        tb.add_column(t(f"tui.shield.col.{col}"))
     for name, v in items:
-        verdict = "[bold red]BLOCK[/]" if v.blocked else ("[yellow]warn[/]" if v.findings else "[green]pass[/]")
+        verdict = (Text(t("tui.shield.block"), style="bold red") if v.blocked else
+                   Text(t("tui.shield.warn"), style="yellow") if v.findings else Text(t("tui.shield.pass"), style="green"))
         tops = ", ".join(f"{f.detector}({f.severity:.2f})" for f in sorted(v.findings, key=lambda f: -f.severity)[:3])
         tb.add_row(name, verdict, f"{v.risk:.2f}", tops or "-", f"{v.latency_ms:.2f}")
     return tb
 
 
 def render_loops(items: list[tuple[str, LoopVerdict]]) -> Table:
-    tb = Table(title="loop breaker", expand=False)
+    tb = Table(title=t("tui.loops.title"), expand=False)
     for col in ("trajectory", "halt", "step", "entropy", "novelty", "reason"):
-        tb.add_column(col)
+        tb.add_column(t(f"tui.loops.col.{col}"))
     for name, v in items:
-        tb.add_row(name, "[bold red]HALT[/]" if v.halt else "[green]ok[/]", str(v.step), f"{v.entropy:.2f}",
+        halt = Text(t("tui.loops.halt"), style="bold red") if v.halt else Text(t("tui.loops.ok"), style="green")
+        tb.add_row(name, halt, str(v.step), f"{v.entropy:.2f}",
                    f"{v.novelty:.2f}", v.reason)
     return tb
 
@@ -170,15 +180,15 @@ def dashboard(console: Console | None = None) -> None:
     q = next(x for x in queries if x.family == "table")
     hit = idx.search(q.text, k=1)[0]
     page = next(p for p in pages if p.page_id == hit.page_id)
-    console.rule(f"[bold cyan]Subsystem A · visual query: {q.text!r}")
+    console.rule(Text(t("tui.dash.visual", query=q.text), style="bold cyan"))
     console.print(render_hit(hit, page.width, page.height))
     case = build_trace_cases()[0]
     rep = analyze(case.bundle)
-    console.rule(f"[bold yellow]Subsystem B · RCA: {case.name}")
+    console.rule(Text(t("tui.dash.rca", name=case.name), style="bold yellow"))
     console.print(render_rca(rep, case.bundle))
     docs, trajs = build_security_corpus()
     sh = InjectionShield()
     sample = [d for d in docs if d.label == "benign"][:3] + [d for d in docs if d.label == "malicious"][::5]
-    console.rule("[bold red]Subsystem C · shield & loop breaker")
+    console.rule(Text(t("tui.dash.security"), style="bold red"))
     console.print(render_security([(d.id, sh.scan(d.text, d.source)) for d in sample]))
-    console.print(render_loops([(t.id, LoopBreaker().run(t.steps)) for t in trajs]))
+    console.print(render_loops([(tr.id, LoopBreaker().run(tr.steps)) for tr in trajs]))
