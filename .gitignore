@@ -36,3 +36,7 @@ evals/runs/
 .idea/
 .vscode/
 *.swp
+
+# local secrets
+.env
+.env.*
